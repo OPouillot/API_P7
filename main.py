@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI, Query, Response
 from typing import Annotated
 import mlflow
