@@ -2,28 +2,34 @@ from fastapi import FastAPI, Query, Response
 from typing import Annotated
 import mlflow
 from mlflow import MlflowClient
+import pickle
 import pandas as pd
 
 app = FastAPI()
 
-data = pd.read_csv('../df_test_cleaned.csv')
+data = pd.read_csv('df_test_cleaned.csv')
 
 # Load Model from mlflow
 tracking_URI = "http://127.0.0.1:5000"
-mlflow.set_tracking_uri(tracking_URI) 
 
-client = MlflowClient()
-rm = client.search_registered_models()
-if len(rm) != 0:
-    rm_name = rm[0].name
-    rm_run_id = rm[0].latest_versions[0].run_id
+if tracking_URI == '':
+    mlflow.set_tracking_uri(tracking_URI) 
+
+    client = MlflowClient()
+    rm = client.search_registered_models()
+    if len(rm) != 0:
+        rm_name = rm[0].name
+        rm_run_id = rm[0].latest_versions[0].run_id
+    else:
+        rm_run_id = ''
+        print('There is no model registered.')
+
+    model_path = "runs:/" + rm_run_id + "/" + rm_name
+    model = mlflow.sklearn.load_model(model_path)
 else:
-    rm_run_id = ''
-    print('There is no model registered.')
+    model_path = "Model/model.pkl"
+    model = pickle.load(open(model_path, 'rb'))
 
-model_path = "runs:/" + rm_run_id + "/" + rm_name
-
-model = mlflow.sklearn.load_model(model_path)
 predictions = model.predict(data)
 probas = model.predict_proba(data)
 data["y_pred"] = predictions
