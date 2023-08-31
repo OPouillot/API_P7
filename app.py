@@ -35,6 +35,11 @@ probas = model.predict_proba(data)
 data["y_pred"] = predictions
 
 
+@app.get('/')
+def start_page():
+    return {'message': "Welcome !"}
+
+
 @app.get('/group/')
 def customers_stat(arr_features: Annotated[list[str] | None, Query()] = None):
     sample_false = data[arr_features].loc[data["y_pred"] == 0].sample(1500)
