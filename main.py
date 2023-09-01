@@ -1,9 +1,10 @@
+
 import uvicorn
 from fastapi import FastAPI, Query, Response
 from typing import Annotated
 import mlflow
 from mlflow import MlflowClient
-import pickle
+import joblib
 import pandas as pd
 
 app = FastAPI()
@@ -28,7 +29,7 @@ if tracking_URI == '':
     model_path = "runs:/" + rm_run_id + "/" + rm_name
     model = mlflow.sklearn.load_model(model_path)
 else:
-    model = pickle.load(open("model.pkl", 'rb'))
+    model = joblib.load('mymodel.pkl')
 
 predictions = model.predict(data)
 probas = model.predict_proba(data)
