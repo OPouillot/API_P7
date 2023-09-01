@@ -8,7 +8,7 @@ import pandas as pd
 
 app = FastAPI()
 
-data = pd.read_csv('/home/site/wwwroot/df_test_cleaned.csv')
+data = pd.read_csv('df_test_cleaned.csv')
 
 # Load Model from mlflow
 tracking_URI = "http://127.0.0.1:5000"
@@ -28,8 +28,7 @@ if tracking_URI == '':
     model_path = "runs:/" + rm_run_id + "/" + rm_name
     model = mlflow.sklearn.load_model(model_path)
 else:
-    model_path = "/home/site/wwwroot/Model/model.pkl"
-    model = pickle.load(open(model_path, 'rb'))
+    model = pickle.load(open("model.pkl", 'rb'))
 
 predictions = model.predict(data)
 probas = model.predict_proba(data)
