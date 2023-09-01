@@ -28,7 +28,7 @@ data = pd.read_csv('df_test_cleaned.csv')
 #    model_path = "runs:/" + rm_run_id + "/" + rm_name
 #    model = mlflow.sklearn.load_model(model_path)
 
-model = pickle.load(open('model.pkl', 'rb'))
+#model = pickle.load(open('model.pkl', 'rb'))
 
 #predictions = model.predict(data)
 #probas = model.predict_proba(data)
