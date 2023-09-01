@@ -57,3 +57,7 @@ def predict_id(id: int):
                  'probability': probability,
                  'infos': infos}
     return dict_data
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="localhost", port=8000)
