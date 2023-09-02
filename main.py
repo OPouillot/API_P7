@@ -10,26 +10,27 @@ app = FastAPI()
 
 data = pd.read_csv('df_test_cleaned_3000.csv')
 
-# Load Model from mlflow
-tracking_URI = "http://127.0.0.1:5000"
+## Load Model from mlflow
+#tracking_URI = "http://127.0.0.1:5000"
+#
+#if tracking_URI == '':
+#    mlflow.set_tracking_uri(tracking_URI) 
+#
+#    client = MlflowClient()
+#    rm = client.search_registered_models()
+#    if len(rm) != 0:
+#        rm_name = rm[0].name
+#        rm_run_id = rm[0].latest_versions[0].run_id
+#    else:
+#        rm_run_id = ''
+#        print('There is no model registered.')
+#
+#    model_path = "runs:/" + rm_run_id + "/" + rm_name
+#    model = mlflow.sklearn.load_model(model_path)
+#else:
 
-if tracking_URI == '':
-    mlflow.set_tracking_uri(tracking_URI) 
-
-    client = MlflowClient()
-    rm = client.search_registered_models()
-    if len(rm) != 0:
-        rm_name = rm[0].name
-        rm_run_id = rm[0].latest_versions[0].run_id
-    else:
-        rm_run_id = ''
-        print('There is no model registered.')
-
-    model_path = "runs:/" + rm_run_id + "/" + rm_name
-    model = mlflow.sklearn.load_model(model_path)
-else:
-    with open('model.pkl', 'rb') as model_file:
-        model = pickle.load(model_file)
+with open('model.pkl', 'rb') as model_file:
+    model = pickle.load(model_file)
 
 probas = model.predict_proba(data)
 data["y_pred"] = model.predict(data)
@@ -41,7 +42,7 @@ async def start_page():
 
 @app.get('/group/')
 async def customers_stat(feature: str):
-    return Response(data[feature, "y_pred"])
+    return Response(data[[feature, "y_pred"]])
 
 
 @app.get('/customer/')
