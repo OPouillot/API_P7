@@ -30,9 +30,9 @@ if tracking_URI == '':
 else:
     with open('model.pkl', 'rb') as model_file:
         model = pickle.load(model_file)
-    
-data["y_pred"] = model.predict(data)
+
 probas = model.predict_proba(data)
+data["y_pred"] = model.predict(data)
 
 @app.get('/')
 async def start_page():
@@ -41,7 +41,7 @@ async def start_page():
 
 @app.get('/group/')
 async def customers_stat(feature: str):
-    return Response(data[feature])
+    return Response(data[feature, "y_pred"])
 
 
 @app.get('/customer/')
