@@ -4,7 +4,6 @@ imblearn==0.0
 lightgbm==3.3.5
 mlflow==2.5.0
 pandas==1.5.3
-pickle==4.0.0
 scikit_learn==1.2.2
 uvicorn==0.23.2
 xgboost==1.7.6
