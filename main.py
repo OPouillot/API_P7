@@ -28,11 +28,11 @@ if tracking_URI == '':
     model_path = "runs:/" + rm_run_id + "/" + rm_name
     model = mlflow.sklearn.load_model(model_path)
 else:
-    model = pickle.load(open('model.pkl', 'rb'))
+    with open('model.pkl', 'rb') as model_file:
+        model = pickle.load(model_file)
     
-predictions = model.predict(data)
+data["y_pred"] = model.predict(data)
 probas = model.predict_proba(data)
-data["y_pred"] = predictions
 
 @app.get('/')
 async def start_page():
@@ -40,15 +40,13 @@ async def start_page():
 
 
 @app.get('/group/')
-async def customers_stat(arr_features: Annotated[list[str] | None, Query()] = None):
-    sample_false = data[arr_features].loc[data["y_pred"] == 0].sample(1500)
-    sample_customers = pd.concat([sample_false, data[arr_features].loc[data["y_pred"] == 1].sample(1500)])
-    return Response(sample_customers.to_json(orient="records"), media_type="application/json")
+async def customers_stat(feature: str):
+    return Response(data[feature])
 
 
 @app.get('/customer/')
 async def predict_id(id: int):
-    prediction = int(predictions[id])
+    prediction = int(data["y_pred"][id])
     probability = probas[id].tolist()
     infos = data.iloc[id, :]
     dict_data = {'prediction': prediction,
