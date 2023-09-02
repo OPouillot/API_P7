@@ -42,7 +42,7 @@ async def start_page():
 
 @app.get('/group/')
 async def customers_stat(feature: str):
-    return Response(data[[feature, "y_pred"]])
+    return Response(data[[feature, "y_pred"]].to_json(orient="records"), media_type="application/json")
 
 
 @app.get('/customer/')
