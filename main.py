@@ -1,8 +1,6 @@
 import uvicorn
-from fastapi import FastAPI, Query, Response
-from typing import Annotated
-import mlflow
-from mlflow import MlflowClient
+from fastapi import FastAPI, Response
+import shap
 import pickle
 import pandas as pd
 
@@ -10,27 +8,8 @@ app = FastAPI()
 
 data = pd.read_csv('df_test_cleaned_3000.csv')
 
-## Load Model from mlflow
-#tracking_URI = "http://127.0.0.1:5000"
-#
-#if tracking_URI == '':
-#    mlflow.set_tracking_uri(tracking_URI) 
-#
-#    client = MlflowClient()
-#    rm = client.search_registered_models()
-#    if len(rm) != 0:
-#        rm_name = rm[0].name
-#        rm_run_id = rm[0].latest_versions[0].run_id
-#    else:
-#        rm_run_id = ''
-#        print('There is no model registered.')
-#
-#    model_path = "runs:/" + rm_run_id + "/" + rm_name
-#    model = mlflow.sklearn.load_model(model_path)
-#else:
-
 with open('model.pkl', 'rb') as model_file:
-    model = pickle.load(model_file)
+    model_pipe = pickle.load(model_file)
 
 @app.get('/')
 async def start_page():
@@ -39,14 +18,31 @@ async def start_page():
 
 @app.get('/group/')
 async def customers_stat(feature: str):
-    data["y_pred"] = model.predict(data)
+    data["y_pred"] = model_pipe.predict(data)
+
     return Response(data[[feature, "y_pred"]].to_json(orient="records"), media_type="application/json")
+
+@app.get('/shap/')
+async def customers_stat():
+    # Extraire le modèle du pipeline
+    model = None
+    for step_name, step_model in model_pipe.named_steps.items():
+        if step_name == 'model':
+            model = step_model
+            break
+    # Vérifier si le modèle a été trouvé
+    if model is None:
+        raise ValueError("Aucun modèle trouvé dans le pipeline")
+    
+    feat_imp = model.feature_importances_.tolist()
+    return {'features importance': feat_imp}
 
 
 @app.get('/customer/')
 async def predict_id(id: int):
-    probability = model.predict_proba(data[id, :]).tolist()
-    prediction = int(model.predict(data[id, :]))
+    id_features = data.iloc[id, :].values.reshape(1, -1)
+    probability = model_pipe.predict_proba(id_features).tolist()
+    prediction = int(model_pipe.predict(id_features))
     infos = data.iloc[id, :]
     dict_data = {'prediction': prediction,
                  'probability': probability,
