@@ -45,8 +45,8 @@ async def customers_stat(feature: str):
 
 @app.get('/customer/')
 async def predict_id(id: int):
-    probability = model.predict_proba(data[id]).tolist()
-    prediction = int(model.predict(data[id]))
+    probability = model.predict_proba(data[id, :]).tolist()
+    prediction = int(model.predict(data[id, :]))
     infos = data.iloc[id, :]
     dict_data = {'prediction': prediction,
                  'probability': probability,
