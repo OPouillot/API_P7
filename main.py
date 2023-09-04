@@ -35,7 +35,7 @@ async def customers_stat():
         raise ValueError("Aucun modèle trouvé dans le pipeline")
     
     feat_imp = model.feature_importances_.tolist()
-    return {'features importance': feat_imp}
+    return {'features_importance': feat_imp}
 
 
 @app.get('/customer/')
