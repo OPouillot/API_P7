@@ -17,9 +17,10 @@ async def start_page():
 
 @app.get('/group/')
 async def customers_stat(feature: str):
-    data["y_pred"] = model_pipe.predict(data)
+    y_pred = pd.Series(data=model_pipe.predict(data))
 
-    return Response(data[[feature, "y_pred"]].to_json(orient="records"), media_type="application/json")
+    return {'feature':data[feature].tolist(),
+            'y_pred': y_pred.tolist()}
 
 @app.get('/shap/')
 async def customers_stat():
