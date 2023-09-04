@@ -41,7 +41,7 @@ async def customers_stat():
 @app.get('/customer/')
 async def predict_id(id: int):
     id_features = data.iloc[id, :].values.reshape(1, -1)
-    probability = model_pipe.predict_proba(id_features).tolist()
+    probability = model_pipe.predict_proba(id_features)[0].tolist()
     prediction = int(model_pipe.predict(id_features))
     infos = data.iloc[id, :]
     dict_data = {'prediction': prediction,
