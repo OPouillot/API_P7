@@ -32,9 +32,6 @@ data = pd.read_csv('df_test_cleaned_3000.csv')
 with open('model.pkl', 'rb') as model_file:
     model = pickle.load(model_file)
 
-probas = model.predict_proba(data)
-data["y_pred"] = model.predict(data)
-
 @app.get('/')
 async def start_page():
     return {'message': "Welcome !"}
@@ -42,13 +39,14 @@ async def start_page():
 
 @app.get('/group/')
 async def customers_stat(feature: str):
+    data["y_pred"] = model.predict(data)
     return Response(data[[feature, "y_pred"]].to_json(orient="records"), media_type="application/json")
 
 
 @app.get('/customer/')
 async def predict_id(id: int):
-    prediction = int(data["y_pred"][id])
-    probability = probas[id].tolist()
+    probability = model.predict_proba(data[id]).tolist()
+    prediction = int(model.predict(data[id]))
     infos = data.iloc[id, :]
     dict_data = {'prediction': prediction,
                  'probability': probability,
