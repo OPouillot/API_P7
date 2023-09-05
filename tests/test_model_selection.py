@@ -1,6 +1,6 @@
 from sklearn.dummy import DummyClassifier
 import pandas as pd
-from model_selection import job_score, model_pipe, log_run, select_final_model
+from model_selection import job_score, model_pipe, select_final_model
 
 
 def test_should_calculate_job_score():

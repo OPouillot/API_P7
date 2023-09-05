@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, Response
+from fastapi import FastAPI
 import pickle
 import pandas as pd
 
@@ -12,18 +12,18 @@ with open('model.pkl', 'rb') as model_file:
 
 @app.get('/')
 async def start_page():
-    return {'message': "Welcome !"}
+    return {'msg': "Welcome to the Projet 7 API !"}
 
 
 @app.get('/group/')
-async def customers_stat(feature: str):
+async def get_group(feature: str):
     y_pred = pd.Series(data=model_pipe.predict(data))
 
     return {'feature':data[feature].tolist(),
             'y_pred': y_pred.tolist()}
 
 @app.get('/shap/')
-async def customers_stat():
+async def get_shap():
     # Extraire le modèle du pipeline
     model = None
     for step_name, step_model in model_pipe.named_steps.items():
@@ -39,7 +39,7 @@ async def customers_stat():
 
 
 @app.get('/customer/')
-async def predict_id(id: int):
+async def get_predict(id: int):
     id_features = data.iloc[id, :].values.reshape(1, -1)
     probability = model_pipe.predict_proba(id_features)[0].tolist()
     prediction = int(model_pipe.predict(id_features))
