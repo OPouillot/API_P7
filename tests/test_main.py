@@ -1,4 +1,4 @@
-from main import app, start_page, get_group, get_shap, get_predict
+from main import app
 import httpx
 from fastapi.testclient import TestClient
 
