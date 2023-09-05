@@ -5,11 +5,6 @@ import pandas as pd
 
 app = FastAPI()
 
-data = pd.read_csv('df_test_cleaned_3000.csv')
-
-with open('model.pkl', 'rb') as model_file:
-    model_pipe = pickle.load(model_file)
-
 @app.get('/')
 async def start_page():
     return {'msg': "Welcome to the Projet 7 API !"}
@@ -52,3 +47,8 @@ async def get_predict(id: int):
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)
+
+    data = pd.read_csv('df_test_cleaned_3000.csv')
+
+    with open('model.pkl', 'rb') as model_file:
+        model_pipe = pickle.load(model_file)
