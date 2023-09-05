@@ -233,7 +233,7 @@ if __name__ == '__main__':
         # save the model in pickle format
         # set path to location for persistence
         sk_model = best_models[final_model['name']]
-        sk_path_dir = os.getcwd() + "\Model"
+        sk_path_dir = os.getcwd() + "/Model"
         
         # Si le dossier existe, le supprimer
         if os.path.exists(sk_path_dir) and os.path.isdir(sk_path_dir):
