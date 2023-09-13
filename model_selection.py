@@ -128,7 +128,7 @@ if __name__ == '__main__':
     tracking_URI = "http://127.0.0.1:5000"
     
     # import data file
-    df_train = pd.read_csv('df_train_cleaned.csv')
+    df_train = pd.read_csv('../df_train_cleaned.csv')
     
     #splitting data to train and test sets
     X = df_train.drop('TARGET', axis=1).values
@@ -244,6 +244,8 @@ if __name__ == '__main__':
         mlflow.sklearn.save_model(sk_model,
                                   sk_path_dir,
                                   serialization_format=mlflow.sklearn.SERIALIZATION_FORMAT_PICKLE)
+        
+        shutil.copyfile(sk_path_dir+"/model.pkl", os.getcwd()+"/model.pkl")
         print("Model saved and ready to use.")
         
     else:
