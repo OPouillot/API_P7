@@ -3,7 +3,22 @@ from fastapi import FastAPI
 import pickle
 import pandas as pd
 
-app = FastAPI()
+tags_metadata = [
+    {
+        "name": "group",
+        "description": "Return all client prediction and a specific feature",
+    },
+    {
+        "name": "feat_imp",
+        "description": "Return features importance",
+    },
+    {
+        "name": "customer",
+        "description": "Return prediction, probabilities and info about a specific client",
+    },
+]
+
+app = FastAPI(openapi_tags=tags_metadata)
 
 data = pd.read_csv('df_test_cleaned_3000.csv')
 
@@ -15,14 +30,14 @@ async def start_page():
     return {'msg': "Welcome to the Projet 7 API !"}
 
 
-@app.get('/group/')
+@app.get('/group/', tags=["group"])
 async def get_group(feature: str):
     y_pred = pd.Series(data=model_pipe.predict(data))
 
     return {'feature':data[feature].tolist(),
             'y_pred': y_pred.tolist()}
 
-@app.get('/shap/')
+@app.get('/feat_imp/', tags=["feat_imp"])
 async def get_shap():
     # Extraire le modèle du pipeline
     model = None
@@ -38,7 +53,7 @@ async def get_shap():
     return {'features_importance': feat_imp}
 
 
-@app.get('/customer/')
+@app.get('/customer/', tags=["customer"])
 async def get_predict(id: int):
     id_features = data.iloc[id, :].values.reshape(1, -1)
     probability = model_pipe.predict_proba(id_features)[0].tolist()
