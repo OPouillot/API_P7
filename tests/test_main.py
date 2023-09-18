@@ -20,8 +20,8 @@ def test_get_group():
     assert "y_pred" in response_json
 
 
-def test_get_shap():
-    response = client.get("/shap/")
+def test_get_feat_imp():
+    response = client.get("/feat_imp/")
     assert response.status_code == 200
     response_json = response.json()
     assert "features_importance" in response_json
